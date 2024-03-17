@@ -2,23 +2,23 @@ from typing import List, Tuple
 import json
 from collections import defaultdict
 import re
+import pandas as pd
+
 
 ## OBJETIVO 2 ##
 ## Los top 10 emojis más usados con su respectivo conteo. Debe incluir las siguientes funciones:
 
 file_path = 'C:\\Users\\anton\\Downloads\\tweets\\farmers-protest-tweets-2021-2-4.json'
 emojis = defaultdict(int)
-patron_sep = r"\ud8"
-patron_regex = r"\\ud8\w{2}\\ud\w{3}"
+patron_sep = r"\ud8" #patron para separar el contenido de cada tweet con los inicios del codigo de emoji que inician con ud8...
+patron_regex = r"\\ud8\w{2}\\ud\w{3}" #patron para validar que se trata de un emoji
 diccionario = {}
 
-def q2_memory(file_path: str) -> List[Tuple[str, int]]:
-    with open(file_path) as contenido:  #type contenido = class '_io.TextIOWrapper'
-        lineas = contenido.readlines()  #type lineas = class 'list' y contiene \n de cada linea
-    lista_tweets = [json.loads(linea.rstrip()) for linea in lineas] #recorremos la lista contenido y quitamos los espacios de la derecha que pueda tener la linea y la incluimos dentro de una lista, con esto evitamos los \n de cada linea
-
-    for tweet in lista_tweets:#Recorriendo los tweet de la lista de tweets
-        content = tweet.get("content")#
+def q2_time(file_path: str) -> List[Tuple[str, int]]:
+    # Leer el archivo JSON y cargar los datos en un dataFrame de Pandas
+    df = pd.read_json(file_path, lines=True)
+    # Iterar sobre cada tweet en el dataFrame
+    for content in df['content']:
         # Buscar emojis del mensaje
         for parttwo in json.dumps(content).split(patron_sep):#Recorreriendo en las divisiones de patron de separador
             if parttwo is not None:
@@ -28,6 +28,7 @@ def q2_memory(file_path: str) -> List[Tuple[str, int]]:
 
     # Ordenar usuarios por el top 10 recuento de emojis y con items() convierte el diccionario en una lista de tuplas
     top_emojis = sorted(emojis.items(), key=lambda x: x[1], reverse=True)[:10]
+
     #Realizamos las lineas de abajo para contener la información en un diccionario y aplicarle json dumps para convertir en cadena para lograr representar los iconos
     for i, (emoji, cantidad) in enumerate(top_emojis, 1):#
         diccionario[f"top{i}"] = emoji
@@ -42,5 +43,5 @@ def q2_memory(file_path: str) -> List[Tuple[str, int]]:
     lista_de_tuplas = [(lista_values[i], lista_values[i+1]) for i in range(0, len(lista_values), 2)]
     return lista_de_tuplas
 
-resultado = q2_memory(file_path)
+resultado = q2_time(file_path)
 print(resultado)
