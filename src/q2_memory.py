@@ -28,3 +28,19 @@ def q2_memory(file_path: str) -> List[Tuple[str, int]]:
 
     # Ordenar usuarios por el top 10 recuento de emojis y con items() convierte el diccionario en una lista de tuplas
     top_emojis = sorted(emojis.items(), key=lambda x: x[1], reverse=True)[:10]
+    #Realizamos las lineas de abajo para contener la información en un diccionario y aplicarle json dumps para convertir en cadena para lograr representar los iconos
+    for i, (emoji, cantidad) in enumerate(top_emojis, 1):#
+        diccionario[f"top{i}"] = emoji
+        diccionario[f"vtop{i}"] = cantidad
+
+    diccionario_s = json.dumps(diccionario)#Convertir el dicionario en string
+    diccionario_s= diccionario_s.replace("\\\\","\\") #Reemplazar el \\ a \ para que pueda representarse el emoji en el print
+    diccionario_o = json.loads(diccionario_s) #convertir a diccionario python
+    lista_values = list(diccionario_o.values())#convertir dict_value a una lista para poder iterar
+
+    # Convertir una lista  a una lista de tuplas de dos valores
+    lista_de_tuplas = [(lista_values[i], lista_values[i+1]) for i in range(0, len(lista_values), 2)]
+    return lista_de_tuplas
+
+resultado = q2_memory(file_path)
+print(resultado)
