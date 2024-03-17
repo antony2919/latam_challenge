@@ -20,3 +20,10 @@ def q3_memory(file_path: str) -> List[Tuple[str, int]]:
             if mencion.startswith('@'): #validamos que la cadena empieze con @
                 usuario = mencion[1:]#quitamos el @ del usuario
                 menciones[usuario] += 1#Agregamos una coincidencia mas al diccionario con clave de usuario
+    # Ordenar usuarios por el top 10 recuento de menciones y con items() convierte el diccionario en una lista de tuplas
+
+    top_usuarios = sorted(menciones.items(), key=lambda x: x[1], reverse=True)[:10]
+    return top_usuarios
+
+resultado = q3_memory(file_path)
+print(resultado)
