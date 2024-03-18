@@ -12,7 +12,7 @@ patron_sep = r"\ud8"
 patron_regex = r"\\ud8\w{2}\\ud\w{3}"
 diccionario = {}
 
-def q2_memory(file_path: str) -> List[Tuple[str, int]]:
+def q2_time(file_path: str) -> List[Tuple[str, int]]:
     with open(file_path) as contenido:  #type contenido = class '_io.TextIOWrapper'
         lineas = contenido.readlines()  #type lineas = class 'list' y contiene \n de cada linea
     lista_tweets = [json.loads(linea.rstrip()) for linea in lineas] #recorremos la lista contenido y quitamos los espacios de la derecha que pueda tener la linea y la incluimos dentro de una lista, con esto evitamos los \n de cada linea
@@ -42,5 +42,5 @@ def q2_memory(file_path: str) -> List[Tuple[str, int]]:
     lista_de_tuplas = [(lista_values[i], lista_values[i+1]) for i in range(0, len(lista_values), 2)]
     return lista_de_tuplas
 
-resultado = q2_memory(file_path)
+resultado = q2_time(file_path)
 print(resultado)

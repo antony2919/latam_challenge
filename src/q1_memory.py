@@ -1,45 +1,33 @@
+import pandas as pd
 from typing import List, Tuple
-from datetime import timedelta,datetime
-from collections import defaultdict
-import json
-
-## OBJETIVO 1 ##
-## Las top 10 fechas donde hay más tweets. Mencionar el usuario (username) que más publicaciones tiene por cada uno de esos días.
+from datetime import datetime
 
 file_path = 'C:\\Users\\anton\\Downloads\\tweets\\farmers-protest-tweets-2021-2-4.json'
-resultado = []#Lista para concatenar las tuplas (fecha,usuario mas publicaciones)
-pub_por_fecha = defaultdict(int) # Diccionario para almacenar el recuento de publicaciones por fecha
-pub_usuario_fecha = defaultdict(lambda: defaultdict(int))# Diccionario para almacenar el recuento de publicaciones por usuario para cada fecha
+resultado = []
 
 def q1_memory(file_path: str) -> List[Tuple[datetime.date, str]]:
-    #Leer el contenido del fichero JSON
-    with open(file_path) as contenido:  #type contenido = class '_io.TextIOWrapper'
-        lineas = contenido.readlines()  #type lineas = class 'list' y contiene \n de cada linea
-    lista_tweets = [json.loads(linea.rstrip()) for linea in lineas] #recorremos la lista contenido y quitamos los espacios de la derecha que pueda tener la linea y la incluimos dentro de una lista, con esto evitamos los \n de cada linea
+    # Leer el archivo JSON de un dataframe de pandas
+    df = pd.read_json(file_path, lines=True)
 
-    #Recorremos la lista de tweets
-    for tweet in lista_tweets:
-        #Obtener el contenido del diccionario con clave date
-        fecha_str = tweet.get("date")
-        #Convertir el GMT al pais que desee analizar o mantener en GMT = 0 como viene por defecto
-        fecha_hora = datetime.fromisoformat(fecha_str)
-        nueva_fecha_hora = fecha_hora + timedelta(hours=-5) #en nuestro modificamos al gmt de peru -5,o de acuerdo a lo requerido analizar.
-        fecha_formateada = nueva_fecha_hora.strftime("datetime.date(%Y, %m, %d)") #Formateamos la fecha al formato indicado
-        pub_por_fecha[fecha_formateada] += 1
-        pub_usuario_fecha[fecha_formateada][tweet['user']['username']] +=1
+    # Convertimos la columna de fechas al formato deseado
+    df['date'] = pd.to_datetime(df['date'])
+    df['date'] = df['date'] + pd.Timedelta(hours=-5)# Convertir a la zona horaria deseada gtm - 5 Peru
+
+    # Agregar una columna de fecha formateada
+    df['formatted_date'] = df['date'].dt.date
+
+    # Calcular el recuento de publicaciones por fecha y por usuario
+    pub_por_fecha = df['formatted_date'].value_counts()
+    df['username'] = df['user'].apply(lambda x: x['username'])# Usamos lambda a cada elemento de la columna 'user' para tomar cada diccionario x y extrae el valor asociado a la clave 'username'.
+    pub_usuario_fecha = df.groupby(['formatted_date', 'username']).size().unstack(fill_value=0) # pivotear los nombres a columnas y contar ocurrencias, llenar con 0 si no hay ocurrencias
 
     # Obtener las top 10 fechas con más publicaciones
-    top_fechas = sorted(pub_por_fecha.items(), key=lambda x: x[1], reverse=True)[:10]
+    top_fechas = pub_por_fecha.head(10).index.tolist() # Obtenemos los top10 de los indices y lo convertimos en una lista
 
     # Obtener el usuario con más publicaciones para cada una de las top 10 fechas
-    for fecha, _ in top_fechas:#solo iteramos por el primer valor de la tupla
-        #pub_usuario_fecha es un dictionario[ fecha ][ dictionario[usuario][conteo_publicaciones] ]
-        # con la funcion max a los valores de pub_usuario_fecha(es un diccionario) tome la primera fecha del top de la iteracion hasta llegar a la decima fecha
-        # en el parametro key se pone en base a que valores realizara la funcion max en este caso, asignamos pub_usuario_fecha[fecha].get a key
-        # para que lo haga en base a los valores de conteo de publicaciones de los usuario
-        usuario_mas_publicaciones = max(pub_usuario_fecha[fecha], key=pub_usuario_fecha[fecha].get)
-        resultado.append((fecha, usuario_mas_publicaciones))# cada resultado de la fecha, usuario de mas publiciones se agregan en forma de tupla a la lista resultado
-
+    for fecha in top_fechas:
+        usuario_mas_publicaciones = pub_usuario_fecha.loc[fecha].idxmax()
+        resultado.append((fecha, usuario_mas_publicaciones))
     return resultado
 
 resultado = q1_memory(file_path)
