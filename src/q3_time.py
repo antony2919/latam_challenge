@@ -27,3 +27,4 @@ def q3_time(file_path: str) -> List[Tuple[str, int]]:
 
 resultado = q3_time(file_path)
 print(resultado)
+#
