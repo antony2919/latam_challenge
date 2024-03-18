@@ -6,7 +6,7 @@ file_path = 'C:\\Users\\anton\\Downloads\\tweets\\farmers-protest-tweets-2021-2-
 # Crear una lista para almacenar las menciones de usuarios
 menciones = defaultdict(int)
 
-def q3_time(file_path: str) -> List[Tuple[str, int]]:
+def q3_memory(file_path: str) -> List[Tuple[str, int]]:
     # Leer el archivo JSON y cargar los datos en un DataFrame de Pandas
     df = pd.read_json(file_path, lines=True)
     # Iterar sobre cada tweet en el DataFrame
@@ -20,5 +20,5 @@ def q3_time(file_path: str) -> List[Tuple[str, int]]:
     top_usuarios = sorted(menciones.items(), key=lambda x: x[1], reverse=True)[:10]
     return top_usuarios
 
-resultado= q3_time(file_path)
+resultado= q3_memory(file_path)
 print(resultado)

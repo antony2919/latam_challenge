@@ -8,7 +8,7 @@ from collections import defaultdict
 file_path = 'C:\\Users\\anton\\Downloads\\tweets\\farmers-protest-tweets-2021-2-4.json'
 menciones = defaultdict(int)
 
-def q3_memory(file_path: str) -> List[Tuple[str, int]]:
+def q3_time(file_path: str) -> List[Tuple[str, int]]:
     with open(file_path) as contenido:  #type contenido = class '_io.TextIOWrapper'
         lineas = contenido.readlines()  #type lineas = class 'list' y contiene \n de cada linea
     lista_tweets = [json.loads(linea.rstrip()) for linea in lineas] #recorremos la lista contenido y quitamos los espacios de la derecha que pueda tener la linea y la incluimos dentro de una lista, con esto evitamos los \n de cada linea
@@ -25,5 +25,5 @@ def q3_memory(file_path: str) -> List[Tuple[str, int]]:
     top_usuarios = sorted(menciones.items(), key=lambda x: x[1], reverse=True)[:10]
     return top_usuarios
 
-resultado = q3_memory(file_path)
+resultado = q3_time(file_path)
 print(resultado)

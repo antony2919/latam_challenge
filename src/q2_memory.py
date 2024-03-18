@@ -4,7 +4,6 @@ from collections import defaultdict
 import re
 import pandas as pd
 
-
 ## OBJETIVO 2 ##
 ## Los top 10 emojis más usados con su respectivo conteo. Debe incluir las siguientes funciones:
 
@@ -14,7 +13,7 @@ patron_sep = r"\ud8" #patron para separar el contenido de cada tweet con los ini
 patron_regex = r"\\ud8\w{2}\\ud\w{3}" #patron para validar que se trata de un emoji
 diccionario = {}
 
-def q2_time(file_path: str) -> List[Tuple[str, int]]:
+def q2_memory(file_path: str) -> List[Tuple[str, int]]:
     # Leer el archivo JSON y cargar los datos en un dataFrame de Pandas
     df = pd.read_json(file_path, lines=True)
     # Iterar sobre cada tweet en el dataFrame
@@ -43,5 +42,5 @@ def q2_time(file_path: str) -> List[Tuple[str, int]]:
     lista_de_tuplas = [(lista_values[i], lista_values[i+1]) for i in range(0, len(lista_values), 2)]
     return lista_de_tuplas
 
-resultado = q2_time(file_path)
+resultado = q2_memory(file_path)
 print(resultado)
